@@ -37,4 +37,15 @@ class PricingTest {
         assertEquals(40_000, Pricing.shippingFor(999_990));
         assertEquals(0, Pricing.shippingFor(1_000_000));
     }
+
+    @Test
+    void bulkDiscountCombinesQuantityForTheSameSkuAcrossLines() {
+        Bill bill = Pricing.priceOrder(order("",
+                new Item("K07", 38_500, 6),
+                new Item("M21", 12_990, 1),
+                new Item("K07", 38_500, 6)));
+
+        assertEquals(46_200, bill.discount());
+        assertEquals(507_381, bill.total());
+    }
 }
