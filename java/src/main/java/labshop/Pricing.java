@@ -1,6 +1,7 @@
 package labshop;
 
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /** Pricing rules for LabShop orders. All amounts are in toman. */
@@ -39,9 +40,15 @@ public final class Pricing {
     // 10% off every line that has BULK_MIN_QTY units or more
     static long bulkDiscount(List<Item> items) {
         long discount = 0;
+        Map<String, long[]> totalsBySku = new HashMap<>();
         for (Item item : items) {
-            if (item.getQty() >= BULK_MIN_QTY) {
-                discount += item.getUnitPrice() * item.getQty() * BULK_PERCENT / 100;
+            long[] totals = totalsBySku.computeIfAbsent(item.getSku(), sku -> new long[2]);
+            totals[0] += item.getQty();
+            totals[1] += item.getUnitPrice() * item.getQty();
+        }
+        for (long[] totals : totalsBySku.values()) {
+            if (totals[0] >= BULK_MIN_QTY) {
+                discount += totals[1] * BULK_PERCENT / 100;
             }
         }
         return discount;
