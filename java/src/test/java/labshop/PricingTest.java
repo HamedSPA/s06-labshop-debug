@@ -48,4 +48,12 @@ class PricingTest {
         assertEquals(46_200, bill.discount());
         assertEquals(507_381, bill.total());
     }
+
+    @Test
+    void grandTotalMatchesTheSumOfPrintedOrderTotals() {
+        Order discounted = order("OFF10", new Item("A01", 200_000, 1));
+        Bill printedBill = Pricing.priceOrder(discounted);
+
+        assertEquals(printedBill.total(), Report.grandTotal(List.of(discounted)));
+    }
 }

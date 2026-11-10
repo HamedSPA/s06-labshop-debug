@@ -66,18 +66,7 @@ public final class Pricing {
         if (coupon.kind().equals("fixed")) {
             return Math.min(coupon.value(), amount);
         }
-        return applyPercent(order.getItems(), coupon.value());
-    }
-
-    // lower each unit price so the invoice shows the discounted prices
-    static long applyPercent(List<Item> items, long percent) {
-        long discount = 0;
-        for (Item item : items) {
-            long cut = item.getUnitPrice() * percent / 100;
-            item.setUnitPrice(item.getUnitPrice() - cut);
-            discount += cut * item.getQty();
-        }
-        return discount;
+        return amount * coupon.value() / 100;
     }
 
     // VAT, rounded to the nearest toman
