@@ -20,7 +20,7 @@ public final class Pricing {
     }
 
     public static Coupon findCoupon(String code) {
-        return COUPONS.get(code);
+        return COUPONS.get(code.trim().toUpperCase(java.util.Locale.ROOT));
     }
 
     public static Bill priceOrder(Order order) {
@@ -48,10 +48,14 @@ public final class Pricing {
     }
 
     static long couponDiscount(Order order, long amount) {
-        if (order.getCouponCode().isEmpty()) {
+        String code = order.getCouponCode().trim();
+        if (code.isEmpty()) {
             return 0;
         }
-        Coupon coupon = findCoupon(order.getCouponCode());
+        Coupon coupon = findCoupon(code);
+        if (coupon == null) {
+            return 0;
+        }
         if (coupon.kind().equals("fixed")) {
             return Math.min(coupon.value(), amount);
         }
